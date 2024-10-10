@@ -13,13 +13,13 @@ const AuthLayout = () => {
     <>
       <Stack>
         <Stack.Screen
-          name="chat"
+          name="sign-in"
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="profile"
+          name="sign-up"
           options={{
             headerShown: false,
           }}
