@@ -3,12 +3,14 @@ import { produce } from "immer";
 import { localStorageService } from "../../services/LocalStorageService";
 import { AuthActionType } from "../actions/actions.constants";
 import { EntityState } from "../base/EntityState";
+import { User } from "@/components/models/entities/User";
 
 export interface AuthState extends EntityState {
   userId?: number;
   loading?: boolean;
   error?: string;
   loaded?: boolean;
+  loggedInUser?: User;
 }
 
 const initialState: AuthState = {
@@ -31,6 +33,7 @@ export const authReducer: Reducer<AuthState> = (
       case AuthActionType.FETCH_ME_COMPLETED:
       case AuthActionType.SIGN_UP_COMPLETED: {
         draft.userId = action.payload.id;
+        draft.loggedInUser = action.payload;
         draft.loading = false;
         draft.error = undefined;
         draft.loaded = true;

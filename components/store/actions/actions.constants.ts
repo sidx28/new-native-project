@@ -29,3 +29,12 @@ export enum AuthActionType {
   CHANGE_PASSWORD_COMPLETED = "auth/change/password/completed",
   CHANGE_PASSWORD_ERROR = "auth/change/password/error",
 }
+
+export enum SocketActionType {
+  CONNECT_SOCKET = "socket/connect",
+  SOCKET_CONNECTED = "socket/connect/completed",
+  JOIN_ROOM = "socket/join-room",
+  SEND_MESSAGE = "socket/message/send",
+  RECEIVE_MESSAGE = "socket/message/receive",
+  DISCONNECT_SOCKET = "socket/disonnect",
+}

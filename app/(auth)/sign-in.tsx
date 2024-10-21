@@ -7,7 +7,7 @@ import CustomButton from "@/components/CustomButton";
 
 const SignIn = () => {
   // const { setUser, setIsLogged } = useGlobalContext();
-  const [isSubmitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -18,7 +18,7 @@ const SignIn = () => {
       Alert.alert("Error", "Please fill in all fields");
     }
 
-    setSubmitting(true);
+    setIsSubmitting(true);
 
     // try {
     //   await signIn(form.email, form.password);
@@ -31,7 +31,7 @@ const SignIn = () => {
     // } catch (error) {
     //   Alert.alert("Error", error.message);
     // } finally {
-    //   setSubmitting(false);
+    //   setIsSubmitting(false);
     // }
   };
 
@@ -65,7 +65,7 @@ const SignIn = () => {
 
           <CustomButton
             title="Sign In"
-            handlePress={() => {}}
+            handlePress={submit}
             containerStyles="mt-7"
             isLoading={isSubmitting}
           />

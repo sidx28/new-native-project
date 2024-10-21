@@ -1,15 +1,22 @@
-import store from "@/components/store/store";
+import { useEffect, useState } from "react";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import "react-native-reanimated";
 import { Provider } from "react-redux";
+import { View, ActivityIndicator } from "react-native";
+import { localStorageService } from "@/components/services/LocalStorageService";
+import store from "@/components/store/store";
+import Toast from "react-native-toast-message";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -23,10 +30,37 @@ const RootLayout = () => {
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
+    const initialize = async () => {
+      setLoading(true);
+      const token = await localStorageService.getAuthToken();
+      console.log("token", token);
+      if (!token) {
+        setIsAuthenticated(false);
+        setIsMounted(true);
+        setLoading(false);
+        return;
+      }
+      setIsAuthenticated(true);
+      setIsMounted(true);
+      setLoading(false);
+    };
+
+    initialize();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && isAuthenticated !== null && isMounted) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, isAuthenticated, isMounted]);
+
+  if (!fontsLoaded || isAuthenticated === null || !isMounted || loading) {
+    return (
+      <View style={{ alignItems: "center", flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   if (!fontsLoaded) {
     return null;
@@ -35,10 +69,12 @@ const RootLayout = () => {
   return (
     <Provider store={store}>
       <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
+      <Toast />
     </Provider>
   );
 };

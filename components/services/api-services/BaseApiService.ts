@@ -157,10 +157,12 @@ export class BaseApiService {
   ) => {
     let defaultHeaders = {};
 
+    const authToken = await localStorageService.getAuthToken();
+
     if (useAuth) {
       defaultHeaders = {
         ...defaultHeaders,
-        Authorization: `bearer ${localStorageService.getAuthToken()}`,
+        Authorization: `Bearer ${authToken}`,
       };
     }
 

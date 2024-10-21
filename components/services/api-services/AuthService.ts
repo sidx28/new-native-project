@@ -35,26 +35,8 @@ class AuthService {
     return baseApiService.post("/invites/redeem-invite", { token });
   }
 
-  async fetchMe(): Promise<{ user: User }> {
+  async fetchMe(): Promise<{ data: { user: User } }> {
     return baseApiService.get("/me");
-  }
-
-  async fetchSessions(): Promise<{ user: User }> {
-    return baseApiService.get("/me/sessions/active");
-  }
-
-  async deleteSessions(id: number): Promise<{}> {
-    return baseApiService.delete(`/me/sessions/${id}`);
-  }
-
-  async deleteAllSessions(): Promise<{}> {
-    return baseApiService.delete(`/me/sessions/all`);
-  }
-
-  async fetchUser(data: { susbcriptionPlan: string }): Promise<{ user: User }> {
-    return baseApiService.get("/users-by-plan", {
-      params: { susbscriptionPlan: data.susbcriptionPlan },
-    });
   }
 
   async updateMe(user: UserEditPayloadType): Promise<{ user: User }> {

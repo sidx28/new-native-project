@@ -5,7 +5,6 @@ import { AuthActionType } from "./actions.constants";
 export interface AuthSigninActionPayloadType {
   email: string;
   password: string;
-  // module: string | null;
 }
 
 export interface AuthSignupActionPayloadType {

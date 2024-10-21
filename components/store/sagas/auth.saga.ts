@@ -4,12 +4,18 @@ import { localStorageService } from "@/components/services/LocalStorageService";
 import { SagaPayloadType } from "@/types/SagaPayload.type";
 import { all, call, delay, put, takeLatest } from "redux-saga/effects";
 import {
+  authFetchMeCompletedAction,
+  authFetchMeErrorAction,
   AuthSigninActionPayloadType,
+  authSigninCompletedAction,
+  authSigninErrorAction,
   AuthSignupActionPayloadType,
   authSignupCompletedAction,
+  authSignupErrorAction,
 } from "../actions/auth.action";
-import { Alert } from "react-native";
 import { AuthActionType } from "../actions/actions.constants";
+import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
 interface SigninSagaPayloadType extends SagaPayloadType {
   payload: AuthSigninActionPayloadType;
@@ -26,24 +32,61 @@ function* signinSaga(data: SigninSagaPayloadType): any {
       data.payload
     );
     localStorageService.setAuthToken(response?.token);
-    yield put(authSignupCompletedAction(response.user));
-    // yield call(history.push, AppRouteConfig.schemes._ROOT(currentModule));
-    Alert.prompt("Sign Up Successfully");
-  } catch (e: any) {}
+    yield put(authSigninCompletedAction(response.user));
+    Toast.show({
+      type: "success",
+      text1: "Sign In Successfully",
+      visibilityTime: 2000,
+    });
+  } catch (e: any) {
+    yield put(authSigninErrorAction(e.message));
+    Toast.show({
+      type: "error",
+      text1: "Something went wrong!",
+      visibilityTime: 2000,
+    });
+  }
 }
 
 function* signupSaga(data: SignupSagaPayloadType): any {
   try {
-    const response: { user: User; token: string } = yield call(
+    const response: { data: { user: User; token: string } } = yield call(
       authService.signup,
       data.payload
-    ); 
-    localStorageService.setAuthToken(response?.token);
-    yield put(authSignupCompletedAction(response.user));
-    // yield call(history.push, AppRouteConfig.schemes._ROOT(currentModule));
-    Alert.prompt("Sign Up Successfully");
+    );
+    if (response.data) {
+      localStorageService.setAuthToken(response?.data?.token);
+      yield put(authSignupCompletedAction(response?.data?.user));
+      router.replace("/chats");
+      Toast.show({
+        type: "success",
+        text1: "Sign Up Successfully",
+        visibilityTime: 2000,
+      });
+    }
   } catch (e: any) {
-    // yield call(errorHandler, e, authSignupErrorAction);
+    yield put(authSignupErrorAction(e.message));
+    Toast.show({
+      type: "error",
+      text1: e.message || "Something went wrong!",
+      visibilityTime: 2000,
+    });
+  }
+}
+
+function* fetchMe(): any {
+  try {
+    const response: { data: { user: User } } = yield call(authService.fetchMe);
+    if (response.data) {
+      yield put(authFetchMeCompletedAction(response?.data?.user));
+    }
+  } catch (e: any) {
+    yield put(authFetchMeErrorAction(e.message));
+    Toast.show({
+      type: "error",
+      text1: "Something went wrong!",
+      visibilityTime: 2000,
+    });
   }
 }
 
@@ -51,6 +94,7 @@ function* authSaga() {
   yield all([
     takeLatest(AuthActionType.SIGNIN, signinSaga),
     takeLatest(AuthActionType.SIGN_UP, signupSaga),
+    takeLatest(AuthActionType.FETCH_ME, fetchMe),
   ]);
 }
 
