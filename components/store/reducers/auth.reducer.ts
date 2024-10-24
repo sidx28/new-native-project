@@ -15,6 +15,7 @@ export interface AuthState extends EntityState {
 
 const initialState: AuthState = {
   entities: {},
+  loadingList: false,
 };
 
 export const authReducer: Reducer<AuthState> = (
@@ -29,6 +30,20 @@ export const authReducer: Reducer<AuthState> = (
         draft.loading = true;
         break;
       }
+
+      case AuthActionType.FETCH_USERS: {
+        draft.loadingList = true;
+        break;
+      }
+
+      case AuthActionType.FETCH_USERS_COMPLETED: {
+        const users: User[] = action.payload;
+        users.forEach((u) => {
+          draft.entities[u.id] = u;
+        });
+        draft.loadingList = false;
+      }
+
       case AuthActionType.SIGNIN_COMPLETED:
       case AuthActionType.FETCH_ME_COMPLETED:
       case AuthActionType.SIGN_UP_COMPLETED: {

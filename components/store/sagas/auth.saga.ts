@@ -12,6 +12,8 @@ import {
   AuthSignupActionPayloadType,
   authSignupCompletedAction,
   authSignupErrorAction,
+  fetchUsersCompletedAction,
+  fetchUsersErrorAction,
 } from "../actions/auth.action";
 import { AuthActionType } from "../actions/actions.constants";
 import Toast from "react-native-toast-message";
@@ -57,7 +59,7 @@ function* signupSaga(data: SignupSagaPayloadType): any {
     if (response.data) {
       localStorageService.setAuthToken(response?.data?.token);
       yield put(authSignupCompletedAction(response?.data?.user));
-      router.replace("/chats");
+      router.replace("/chats-list");
       Toast.show({
         type: "success",
         text1: "Sign Up Successfully",
@@ -90,11 +92,30 @@ function* fetchMe(): any {
   }
 }
 
+function* fetchUsers(): any {
+  try {
+    const response: { data: { users: User[] } } = yield call(
+      authService.fetchUsers
+    );
+    if (response.data) {
+      yield put(fetchUsersCompletedAction(response?.data?.users));
+    }
+  } catch (e: any) {
+    yield put(fetchUsersErrorAction(e.message));
+    Toast.show({
+      type: "error",
+      text1: "Something went wrong!",
+      visibilityTime: 2000,
+    });
+  }
+}
+
 function* authSaga() {
   yield all([
     takeLatest(AuthActionType.SIGNIN, signinSaga),
     takeLatest(AuthActionType.SIGN_UP, signupSaga),
     takeLatest(AuthActionType.FETCH_ME, fetchMe),
+    takeLatest(AuthActionType.FETCH_USERS, fetchUsers),
   ]);
 }
 

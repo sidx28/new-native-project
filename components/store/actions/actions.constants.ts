@@ -28,6 +28,10 @@ export enum AuthActionType {
   CHANGE_PASSWORD = "auth/change/password",
   CHANGE_PASSWORD_COMPLETED = "auth/change/password/completed",
   CHANGE_PASSWORD_ERROR = "auth/change/password/error",
+
+  FETCH_USERS = "auth/fetch/users",
+  FETCH_USERS_COMPLETED = "auth/fetch/users/completed",
+  FETCH_USERS_ERROR = "auth/fetch/users/error",
 }
 
 export enum SocketActionType {

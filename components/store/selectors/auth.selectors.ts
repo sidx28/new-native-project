@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import { authSelector } from "./app.selectors";
+import { User } from "@/components/models/entities/User";
 
 export const meError = createSelector(
   [authSelector],
@@ -24,4 +25,18 @@ export const meLoaded = createSelector(
 export const meSelector = createSelector(
   [authSelector],
   (authState) => authState.loggedInUser
+);
+
+export const usersSelector = createSelector([authSelector], (authState) => {
+  const loggedInUser = authState?.loggedInUser;
+
+  const usersData = Object.keys(authState.entities)
+    ?.map((i) => authState.entities[+i])
+    ?.filter((i) => i.id !== loggedInUser?.id);
+  return usersData ?? [];
+});
+
+export const usersLoadingSelector = createSelector(
+  [authSelector],
+  (authState) => authState.loadingList
 );

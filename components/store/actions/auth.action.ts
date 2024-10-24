@@ -138,3 +138,15 @@ export const changePasswordErrorAction = (message: string) => ({
   type: AuthActionType.CHANGE_PASSWORD_ERROR,
   payload: message,
 });
+
+export const fetchUsersAction = () => ({ type: AuthActionType.FETCH_USERS });
+
+export const fetchUsersCompletedAction = (users: User[]) => ({
+  type: AuthActionType.FETCH_USERS_COMPLETED,
+  payload: users,
+});
+
+export const fetchUsersErrorAction = (message: string) => ({
+  type: AuthActionType.FETCH_USERS_ERROR,
+  payload: message,
+});

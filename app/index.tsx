@@ -39,7 +39,7 @@ const Welcome: React.FC<WelcomePropsType> = (props) => {
     initialize();
   }, []);
 
-  if (!meLoading && loggedInUser) return <Redirect href="/chats" />;
+  if (!meLoading && loggedInUser) return <Redirect href="/chats-list" />;
 
   return (
     <SafeAreaView className="h-full bg-primary">

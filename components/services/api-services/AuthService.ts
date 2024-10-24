@@ -39,6 +39,10 @@ class AuthService {
     return baseApiService.get("/me");
   }
 
+  async fetchUsers(): Promise<{ data: { user: User } }> {
+    return baseApiService.get("/users");
+  }
+
   async updateMe(user: UserEditPayloadType): Promise<{ user: User }> {
     return baseApiService.put("/me", { ...user });
   }
